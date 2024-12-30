@@ -139,11 +139,12 @@ public class StudentGridUI {
         table.getColumnModel().getColumn(5).setCellRenderer(new ButtonRenderer());
         // 自定义编辑器为按钮并添加点击事件
         table.getColumnModel().getColumn(5).setCellEditor(new ButtonEditor(new JCheckBox(),program));
+        // 自定义单元格编辑器，确保输入框字体一致
+        table.setDefaultEditor(Object.class, new CustomCellEditor());
 
         table.getColumnModel().getColumn(5).setPreferredWidth(75); // 最后一列宽度缩小
         table.getColumnModel().getColumn(5).setMaxWidth(75); // 限制最大宽度
         table.getColumnModel().getColumn(5).setMinWidth(75); // 限制最小宽度
-
         return table;
     }
 
@@ -188,6 +189,16 @@ public class StudentGridUI {
                     student.getGrades(),
                     "删除"
             });
+        }
+    }
+
+    // 自定义单元格编辑器，设置字体
+    private static class CustomCellEditor extends DefaultCellEditor {
+
+        public CustomCellEditor() {
+            super(new JTextField()); // 使用 JTextField 作为编辑组件
+            JTextField textField = (JTextField) getComponent();
+            textField.setFont(new Font("微软雅黑", Font.BOLD, 18)); // 设置字体
         }
     }
 
@@ -264,6 +275,4 @@ public class StudentGridUI {
         }
 
     }
-
-
 }
