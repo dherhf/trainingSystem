@@ -77,6 +77,7 @@ public class StudentGridUI {
                     "2024-01-01",
                     0,
                     0
+
             );
             program.addStudent(newStudent);
 
@@ -87,6 +88,7 @@ public class StudentGridUI {
                     newStudent.getRegistrationDate(),
                     newStudent.getTuition(),
                     newStudent.getGrades(),
+                    "出勤",
                     "删除"
             });
         });
@@ -106,7 +108,7 @@ public class StudentGridUI {
     }
 
     private static DefaultTableModel createTableModel(List<TrainingSystem.Program.Student> students) {
-        String[] columnNames = {"ID", "姓名", "报名日期", "缴费金额", "成绩", " "};
+        String[] columnNames = {"ID", "姓名", "报名日期", "缴费金额", "成绩", "考勤", " "};
         Object[][] data = students.stream()
                 .map(student -> new Object[]{
                         student.getStudentId(),
@@ -114,16 +116,18 @@ public class StudentGridUI {
                         student.getRegistrationDate(),
                         student.getTuition(),
                         student.getGrades(),
+                        "出勤", // 默认考勤状态
                         "删除"
                 }).toArray(Object[][]::new);
         return new DefaultTableModel(data, columnNames) {
             @Override
             public boolean isCellEditable(int row, int column) {
-                return column != 0; // 禁止编辑 ID 列
+                // ID列不可编辑
+                return column != 0 ;
             }
-
         };
     }
+
 
     private static JTable createStudentTable(DefaultTableModel tableModel, TrainingSystem.Program program) {
         JTable table = new JTable(tableModel);
@@ -134,17 +138,20 @@ public class StudentGridUI {
         // 设置表头字体
         JTableHeader header = table.getTableHeader();
         header.setFont(new Font("微软雅黑", Font.BOLD, 18));
-
+        // 自定义渲染器为下拉框
+        table.getColumnModel().getColumn(5).setCellRenderer(new AttendanceRenderer());
+        // 自定义编辑器为下拉框并添加点击事件
+        table.getColumnModel().getColumn(5).setCellEditor(new AttendanceEditor());
         // 自定义渲染器为按钮
-        table.getColumnModel().getColumn(5).setCellRenderer(new ButtonRenderer());
+        table.getColumnModel().getColumn(6).setCellRenderer(new ButtonRenderer());
         // 自定义编辑器为按钮并添加点击事件
-        table.getColumnModel().getColumn(5).setCellEditor(new ButtonEditor(new JCheckBox(), program));
+        table.getColumnModel().getColumn(6).setCellEditor(new ButtonEditor(new JCheckBox(), program));
         // 自定义单元格编辑器，确保输入框字体一致
         table.setDefaultEditor(Object.class, new CustomCellEditor());
 
-        table.getColumnModel().getColumn(5).setPreferredWidth(75); // 最后一列宽度缩小
-        table.getColumnModel().getColumn(5).setMaxWidth(75); // 限制最大宽度
-        table.getColumnModel().getColumn(5).setMinWidth(75); // 限制最小宽度
+        table.getColumnModel().getColumn(6).setPreferredWidth(75); // 最后一列宽度缩小
+        table.getColumnModel().getColumn(6).setMaxWidth(75); // 限制最大宽度
+        table.getColumnModel().getColumn(6).setMinWidth(75); // 限制最小宽度
         return table;
     }
 
@@ -187,10 +194,35 @@ public class StudentGridUI {
                     student.getRegistrationDate(),
                     student.getTuition(),
                     student.getGrades(),
+                    "出勤",
                     "删除"
             });
         }
     }
+
+    // 自定义渲染器为下拉框
+    static class AttendanceRenderer extends JComboBox<String> implements TableCellRenderer {
+        public AttendanceRenderer() {
+            super(new String[]{"出勤", "缺勤", "迟到"});
+            setFont(new Font("微软雅黑", Font.BOLD, 18));
+        }
+
+        @Override
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+            setSelectedItem(value); // 设置显示的考勤状态
+            return this;
+        }
+    }
+
+    // 自定义编辑器为下拉框并添加点击事件
+    static class AttendanceEditor extends DefaultCellEditor {
+        public AttendanceEditor() {
+            super(new JComboBox<>(new String[]{"出勤", "缺勤", "迟到"}));
+            JComboBox<?> comboBox = (JComboBox<?>) getComponent();
+            comboBox.setFont(new Font("微软雅黑", Font.BOLD, 18));
+        }
+    }
+
 
     // 自定义单元格编辑器，设置字体
     private static class CustomCellEditor extends DefaultCellEditor {
@@ -202,6 +234,7 @@ public class StudentGridUI {
         }
     }
 
+    // 自定义渲染器为按钮
     static class ButtonRenderer extends JButton implements TableCellRenderer {
         public ButtonRenderer() {
             setOpaque(true);
@@ -217,7 +250,7 @@ public class StudentGridUI {
         }
     }
 
-
+    // 自定义编辑器为按钮并添加点击事件
     static class ButtonEditor extends DefaultCellEditor {
         private final JButton button;
         private String label;
