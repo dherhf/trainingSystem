@@ -155,6 +155,7 @@ public class StudentGridUI {
         return table;
     }
 
+    // 数据同步
     private static void addTableModelListener(DefaultTableModel tableModel, TrainingSystem.Program program) {
         tableModel.addTableModelListener(e -> {
             int row = e.getFirstRow();
@@ -163,21 +164,12 @@ public class StudentGridUI {
             if (column >= 0 && row >= 0) {
                 Object newValue = tableModel.getValueAt(row, column);
                 TrainingSystem.Program.Student student = program.getStudent().get(row);
-
                 // 更新 program 的学生数据
                 switch (column) {
-                    case 1: // 姓名
-                        student.setStudentName(newValue.toString());
-                        break;
-                    case 2: // 报名日期
-                        student.setRegistrationDate(newValue.toString());
-                        break;
-                    case 3: // 缴费金额
-                        student.setTuition(Integer.parseInt(newValue.toString()));
-                        break;
-                    case 4: // 成绩
-                        student.setGrades(Integer.parseInt(newValue.toString()));
-                        break;
+                    case 1: student.setStudentName(newValue.toString());break;// 姓名
+                    case 2: student.setRegistrationDate(newValue.toString());break;// 报名日期
+                    case 3: student.setTuition(Integer.parseInt(newValue.toString()));break;// 缴费金额
+                    case 4: student.setGrades(Integer.parseInt(newValue.toString()));break;// 成绩
                 }
             }
             //保存数据
@@ -253,8 +245,6 @@ public class StudentGridUI {
     // 自定义编辑器为按钮并添加点击事件
     static class ButtonEditor extends DefaultCellEditor {
         private final JButton button;
-        private String label;
-        private boolean isPushed;
         private final TrainingSystem.Program program;
 
         public ButtonEditor(JCheckBox checkBox, TrainingSystem.Program program) {
@@ -269,10 +259,6 @@ public class StudentGridUI {
 
         @Override
         public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
-            label = (value == null ? "" : value.toString());
-            button.setText(label);
-            isPushed = true;
-
             // 移除现有的监听器
             for (ActionListener al : button.getActionListeners()) {
                 button.removeActionListener(al);
@@ -287,26 +273,7 @@ public class StudentGridUI {
                 DefaultTableModel tableModel = (DefaultTableModel) table.getModel();
                 tableModel.removeRow(row);
             });
-
             return button;
         }
-
-        @Override
-        public Object getCellEditorValue() {
-            isPushed = false;
-            return label;
-        }
-
-        @Override
-        public boolean stopCellEditing() {
-            isPushed = false;
-            return super.stopCellEditing();
-        }
-
-        @Override
-        protected void fireEditingStopped() {
-            super.fireEditingStopped();
-        }
-
     }
 }
