@@ -1,0 +1,37 @@
+{
+  "programs": [
+    {
+      "programId": 1,
+      "programName": "C",
+      "students": [
+        {
+          "studentId": 101,
+          "studentName": "杨杰",
+          "registrationDate": "2024-01-15",
+          "tuition": 5000,
+          "grades": 90
+        },
+        {
+          "studentId": 102,
+          "studentName": "刘威",
+          "registrationDate": "2024-01-20",
+          "tuition": 5200,
+          "grades": 85
+        }
+      ]
+    },
+    {
+      "programId": 2,
+      "programName": "java",
+      "students": [
+        {
+          "studentId": 201,
+          "studentName": "肖余",
+          "registrationDate": "2024-02-01",
+          "tuition": 4800,
+          "grades": 88
+        }
+      ]
+    }
+  ]
+}
