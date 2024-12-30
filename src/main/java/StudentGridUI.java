@@ -20,7 +20,7 @@ public class StudentGridUI {
         JTextField searchField = new JTextField();
         searchField.setFont(new Font("微软雅黑", Font.BOLD, 18));
         JButton searchButton = new JButton("搜索");
-        searchButton.setPreferredSize(new Dimension(75,30));
+        searchButton.setPreferredSize(new Dimension(75, 30));
         searchButton.setFont(new Font("微软雅黑", Font.BOLD, 18));
         searchButton.setBackground(Color.BLUE);
         searchButton.setForeground(Color.WHITE);
@@ -33,7 +33,7 @@ public class StudentGridUI {
 
         // 获取表格及模型
         DefaultTableModel tableModel = createTableModel(program.getStudent());
-        JTable studentTable = createStudentTable(tableModel,program);
+        JTable studentTable = createStudentTable(tableModel, program);
 
         //
         TableRowSorter<TableModel> sorter = new TableRowSorter<>(studentTable.getModel());
@@ -119,13 +119,13 @@ public class StudentGridUI {
         return new DefaultTableModel(data, columnNames) {
             @Override
             public boolean isCellEditable(int row, int column) {
-                return column != 0 ; // 禁止编辑 ID 列
+                return column != 0; // 禁止编辑 ID 列
             }
 
         };
     }
 
-    private static JTable createStudentTable(DefaultTableModel tableModel,TrainingSystem.Program program) {
+    private static JTable createStudentTable(DefaultTableModel tableModel, TrainingSystem.Program program) {
         JTable table = new JTable(tableModel);
         table.setFillsViewportHeight(true);
         table.setRowHeight(30);
@@ -138,7 +138,7 @@ public class StudentGridUI {
         // 自定义渲染器为按钮
         table.getColumnModel().getColumn(5).setCellRenderer(new ButtonRenderer());
         // 自定义编辑器为按钮并添加点击事件
-        table.getColumnModel().getColumn(5).setCellEditor(new ButtonEditor(new JCheckBox(),program));
+        table.getColumnModel().getColumn(5).setCellEditor(new ButtonEditor(new JCheckBox(), program));
         // 自定义单元格编辑器，确保输入框字体一致
         table.setDefaultEditor(Object.class, new CustomCellEditor());
 
@@ -219,10 +219,11 @@ public class StudentGridUI {
 
 
     static class ButtonEditor extends DefaultCellEditor {
-        private JButton button;
+        private final JButton button;
         private String label;
         private boolean isPushed;
-        private TrainingSystem.Program program;
+        private final TrainingSystem.Program program;
+
         public ButtonEditor(JCheckBox checkBox, TrainingSystem.Program program) {
             super(checkBox);
             this.program = program;
